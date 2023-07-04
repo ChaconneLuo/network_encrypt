@@ -1,43 +1,71 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import { invoke } from "@tauri-apps/api/tauri";
-import "./App.css";
+import React from 'react';
+import { AppstoreOutlined, MailOutlined, SettingOutlined } from '@ant-design/icons';
+import type { MenuProps } from 'antd';
+import { Menu } from 'antd';
+import { BrowserRouter as Router } from 'react-router-dom';
 
-function App() {
-  const [greetMsg, setGreetMsg] = useState("");
-  const [numberList, setNumberList] = useState([]);
-  const [name, setName] = useState("");
+type MenuItem = Required<MenuProps>['items'][number];
 
-  async function greet() {
-    // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
-    setGreetMsg(await invoke("greet", { name }));
-  }
+function getItem(
+  label: React.ReactNode,
+  key: React.Key,
+  icon?: React.ReactNode,
+  children?: MenuItem[],
+  type?: 'group',
+): MenuItem {
+  return {
+    key,
+    icon,
+    children,
+    label,
+    type,
+  } as MenuItem;
+}
 
-  async function generate_number_list(length: number, min: number, max: number) {
-    setNumberList(await invoke("generate_random_number_list", { length, min, max }));
-  }
+const items: MenuProps['items'] = [
+  getItem('Navigation One', 'sub1', <MailOutlined />, [
+    getItem('Item 1', 'g1', null, [getItem('Option 1', '1'), getItem('Option 2', '2')], 'group'),
+    getItem('Item 2', 'g2', null, [getItem('Option 3', '3'), getItem('Option 4', '4')], 'group'),
+  ]),
+
+  getItem('Navigation Two', 'sub2', <AppstoreOutlined />, [
+    getItem('Option 5', '5'),
+    getItem('Option 6', '6'),
+    getItem('Submenu', 'sub3', null, [getItem('Option 7', '7'), getItem('Option 8', '8')]),
+  ]),
+
+  { type: 'divider' },
+
+  getItem('Navigation Three', 'sub4', <SettingOutlined />, [
+    getItem('Option 9', '9'),
+    getItem('Option 10', '10'),
+    getItem('Option 11', '11'),
+    getItem('Option 12', '12'),
+  ]),
+
+  getItem('Group', 'grp', null, [getItem('Option 13', '13'), getItem('Option 14', '14')], 'group'),
+];
+
+const App: React.FC = () => {
+  const onClick: MenuProps['onClick'] = (e) => {
+    console.log('click ', e);
+  };
 
   return (
-    <div className="container">
-      <h1>Welcome to Tauri!</h1>
-
-      <form
-        className="row"
-        onSubmit={(e) => {
-          e.preventDefault();
-          greet();
-          generate_number_list(10, 1, 100);
-        }}
-      >
-        <input
-          id="greet-input"
-          onChange={(e) => setName(e.currentTarget.value)}
-          placeholder="Enter a name..."
+    <div className='container'>
+      <Router>
+        <Menu
+          onClick={onClick}
+          style={{ width: 200, height: '100vh' }}
+          defaultSelectedKeys={['1']}
+          defaultOpenKeys={['sub1']}
+          mode="vertical"
+          items={items}
         />
-        <button type="submit">Greet</button>
-      </form>
+        <></>
+      </Router>
     </div>
   );
-}
+};
 
 export default App;
