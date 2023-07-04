@@ -36,11 +36,6 @@ function App() {
         />
         <button type="submit">Greet</button>
       </form>
-
-      <p>{greetMsg}</p>
-      {numberList.length && numberList.map((num: number) => {
-        return <p>{num}</p>;
-      })}
     </div>
   );
 }

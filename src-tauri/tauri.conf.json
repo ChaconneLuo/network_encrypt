@@ -7,7 +7,7 @@
     "withGlobalTauri": false
   },
   "package": {
-    "productName": "tauri_use",
+    "productName": "network_encrypt",
     "version": "0.0.0"
   },
   "tauri": {
@@ -37,7 +37,7 @@
       {
         "fullscreen": false,
         "resizable": true,
-        "title": "tartarui_use",
+        "title": "Network Encrypt",
         "width": 800,
         "height": 600
       }
