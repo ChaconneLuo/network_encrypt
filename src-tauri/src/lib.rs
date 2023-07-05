@@ -35,9 +35,16 @@ pub mod openssl_util {
     use openssl::rsa::Rsa;
     use openssl::x509::{X509NameBuilder, X509};
 
-    pub fn generate_509() {
+    #[tauri::command]
+    pub fn generate_509(
+        bits: u32,
+        host: &str,
+        organization: &str,
+        serial: u32,
+        days: u32,
+    ) -> String {
         // 创建一个新的RSA私钥
-        let rsa = Rsa::generate(2048).unwrap();
+        let rsa = Rsa::generate(bits).unwrap();
         let pkey = PKey::from_rsa(rsa).unwrap();
 
         // 创建一个X509名字构建器
@@ -45,10 +52,11 @@ pub mod openssl_util {
 
         // 添加一些常见的名字条目
         x509_name
-            .append_entry_by_nid(Nid::COMMONNAME, "localhost")
+            .append_entry_by_nid(Nid::COMMONNAME, &host[..])
             .unwrap();
+
         x509_name
-            .append_entry_by_nid(Nid::ORGANIZATIONNAME, "My Organization")
+            .append_entry_by_nid(Nid::ORGANIZATIONNAME, &organization[..])
             .unwrap();
         let x509_name = x509_name.build();
 
@@ -56,11 +64,11 @@ pub mod openssl_util {
         let mut x509 = X509::builder().unwrap();
 
         // 设置证书的版本号
-        x509.set_version(2).unwrap();
+        x509.set_version(3).unwrap();
 
         // 设置证书的序列号
         x509.set_serial_number(
-            &openssl::bn::BigNum::from_u32(1)
+            &openssl::bn::BigNum::from_u32(serial)
                 .unwrap()
                 .to_asn1_integer()
                 .unwrap(),
@@ -79,7 +87,7 @@ pub mod openssl_util {
         // 设置证书的有效期
         let not_before = Asn1Time::days_from_now(0).unwrap();
         x509.set_not_before(&not_before).unwrap();
-        let not_after = Asn1Time::days_from_now(365).unwrap();
+        let not_after = Asn1Time::days_from_now(days).unwrap();
         x509.set_not_after(&not_after).unwrap();
 
         // 使用私钥对证书进行签名
@@ -90,6 +98,6 @@ pub mod openssl_util {
 
         // 打印证书的PEM编码
         let pem = x509.to_pem().unwrap();
-        println!("{}", String::from_utf8(pem).unwrap());
+        String::from_utf8(pem).unwrap()
     }
 }

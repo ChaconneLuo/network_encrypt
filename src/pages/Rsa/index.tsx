@@ -18,6 +18,7 @@ const Rsa = () => {
         }
         setBits(value);
     }
+
     async function generate_key() {
         const res = await invoke<[string, string, string, string]>("generate_key", { bits });
         setKey(res);

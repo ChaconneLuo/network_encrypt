@@ -1,6 +1,7 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+use network_encrypt::openssl_util::{__cmd__generate_509, generate_509};
 use network_encrypt::rsa_util::{__cmd__generate_key, generate_key};
 use rand::Rng;
 
@@ -25,7 +26,8 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             greet,
             generate_random_number_list,
-            generate_key
+            generate_key,
+            generate_509
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
