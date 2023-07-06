@@ -26,7 +26,7 @@ const Rsa = () => {
 
     return <>
         <Row gutter={16}>
-            <Space direction="vertical">
+            <Space direction="vertical" style={{ width: '600px' }}>
                 <Col span={24}>
                     长度：<InputNumber value={bits} onChange={handleBits} min={1024}></InputNumber>
                     <Button onClick={generate_key}>生成rsa密钥</Button>

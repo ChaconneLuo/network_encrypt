@@ -1,0 +1,16 @@
+.list {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1;
+    flex-shrink: 0;
+}
+
+.form {
+    height: 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: end;
+    position: absolute;
+}

@@ -17,8 +17,8 @@ const { Title, Paragraph } = Typography;
 const Ssl = () => {
     const [pem, setPem] = useState<string>();
     const [bits, setBits] = useState<number>(1024);
-    const [host, setHost] = useState<string>('');
-    const [organization, setOrganization] = useState<string>('');
+    const [host, setHost] = useState<string>('loalhost');
+    const [organization, setOrganization] = useState<string>('Chaconne');
     const [serial, setSerial] = useState<number>(1);
     const [days, setDays] = useState<number>(365);
 
@@ -41,6 +41,7 @@ const Ssl = () => {
         }
         setSerial(value);
     }
+
     const handleDays = (value: number | null) => {
         if (!value) {
             value = 1;
@@ -58,7 +59,7 @@ const Ssl = () => {
 
     return <>
         <Row gutter={16}>
-            <Space direction="vertical">
+            <Space direction="vertical" style={{ width: '600px' }}>
                 <Col span={24}>
                     长度：<InputNumber value={bits} onChange={handleBits} min={1024}></InputNumber>
                     序列号：<InputNumber value={serial} onChange={handleSerial} ></InputNumber>

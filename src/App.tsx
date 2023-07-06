@@ -1,8 +1,11 @@
 import React from 'react';
 import { MailOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
-import { Menu } from 'antd';
+import { Layout, Menu } from 'antd';
 import { Outlet, useNavigate } from 'react-router-dom';
+import style from './App.module.css';
+import Sider from 'antd/es/layout/Sider';
+import { Content } from 'antd/es/layout/layout';
 
 type MenuItem = Required<MenuProps>['items'][number];
 
@@ -37,19 +40,21 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className='container'>
-      <Menu
-        onClick={onClick}
-        style={{ width: 200, height: '100vh', userSelect: 'none', left: 0 }}
-        defaultSelectedKeys={['1']}
-        defaultOpenKeys={['sub1']}
-        mode="inline"
-        items={items}
-      />
-      <div className='content'>
+    <Layout hasSider>
+      <Sider>
+        <Menu
+          onClick={onClick}
+          style={{ width: 200, height: '100vh', userSelect: 'none', left: 0 }}
+          defaultSelectedKeys={['1']}
+          defaultOpenKeys={['sub1']}
+          mode="inline"
+          items={items}
+        />
+      </Sider>
+      <Content className={style.content}>
         <Outlet />
-      </div>
-    </div >
+      </Content>
+    </Layout>
   );
 };
 
