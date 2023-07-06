@@ -3,6 +3,7 @@
 
 use network_encrypt::openssl_util::{__cmd__generate_509, generate_509};
 use network_encrypt::rsa_util::{__cmd__generate_key, generate_key};
+use network_encrypt::socket_util::{__cmd__run_client, __cmd__run_server, run_client, run_server};
 use rand::Rng;
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
@@ -20,14 +21,15 @@ fn generate_random_number_list(length: u64, min: u64, max: u64) -> Vec<u64> {
     }
     numbers
 }
-
 fn main() {
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![
             greet,
             generate_random_number_list,
             generate_key,
-            generate_509
+            generate_509,
+            run_server,
+            run_client
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

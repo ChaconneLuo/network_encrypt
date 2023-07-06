@@ -89,4 +89,137 @@ pub mod openssl_util {
     }
 }
 
-pub mod socket_util {}
+pub mod socket_util {
+    use std::net::SocketAddr;
+    use tokio::io::AsyncReadExt;
+    use tokio::sync::broadcast::Sender;
+
+    use tokio::io::AsyncWriteExt;
+    use tokio::net::{TcpSocket, TcpStream};
+    use tokio::sync::broadcast::{self};
+
+    async fn process(tcp_stream: &mut TcpStream, tx: &Sender<(String, SocketAddr)>) -> bool {
+        let (mut read_half, _write_half) = tcp_stream.split();
+
+        let mut buf = vec![0; 1024];
+
+        //读取消息
+        match read_half.read_buf(&mut buf).await {
+            Ok(_n) => {
+                //转换字符串
+                let res = String::from_utf8(buf).unwrap();
+                let peer_addr = tcp_stream.peer_addr().unwrap();
+                tx.send((res, peer_addr)).unwrap();
+                return true;
+            }
+            Err(err) => {
+                println!("err : {:?}", err);
+                return false;
+            }
+        }
+    }
+
+    #[tauri::command]
+    pub async fn run_server(host: &str) -> Result<(), ()> {
+        let addr = host.parse().unwrap();
+
+        let socket = TcpSocket::new_v4().unwrap();
+        let _ = socket.bind(addr);
+        let listen = socket.listen(1024).unwrap();
+
+        // println!("服务启动成功,端口:5555");
+
+        let (tx, _rx) = tokio::sync::broadcast::channel(1024);
+
+        loop {
+            //等待客户端的连接
+            let (mut tcp_stream, _) = listen.accept().await.unwrap();
+
+            let tx = tx.clone();
+            let mut rx = tx.subscribe();
+            //启动线程
+            tokio::spawn(async move {
+                //循环处理事件
+                loop {
+                    //只要是返回一个就接结束等待的其他线程
+                    tokio::select! {
+                        //处理消息
+                        result = process(&mut tcp_stream,&tx) => {
+                            //如果出现异常结束循环
+                            if !result {
+                                break;
+                            }
+                        }
+                        //发送消息
+                        result = rx.recv() => {
+                            let (msg,addr) = result.unwrap();
+                            //判断给除了自己的客户端发送消息
+                            if addr != tcp_stream.peer_addr().unwrap(){
+                                let _ = tcp_stream.write_all(msg.as_bytes()).await;
+                            }
+                        }
+                    }
+                }
+                //获取客户端地址
+                let ip = tcp_stream.peer_addr().unwrap();
+                println!("{:?}:断开连接", ip);
+            });
+        }
+    }
+
+    #[tauri::command]
+    pub async fn run_client(host: &str) -> Result<(), ()> {
+        let socket = TcpSocket::new_v4().unwrap();
+        let addr = host.parse().unwrap();
+        let mut tcp_stream = socket.connect(addr).await.unwrap();
+
+        let (tx, mut rx) = broadcast::channel(1024);
+
+        //这个地方是因为下面线程中使用后他自动推导不出类型，所以在这个地方添加一个空的字符串
+        tx.send(String::new()).unwrap();
+        //开启线程处理消息和给服务端发送消息
+        tokio::spawn(async move {
+            loop {
+                let (mut read_half, mut write_half) = tcp_stream.split();
+                let mut buf = vec![0; 1024];
+                tokio::select! {
+                    //读取服务端的消息
+                    result = read_half.read_buf(&mut buf) => {
+                        match result {
+                            Ok(num) => {
+                                //这个地方是因为每次接收到消息，总是会出现空消息，如果接收到不是空消息就不是1024大小
+                                if num != 1024 {
+                                    //转换字符
+                                    let content = String::from_utf8(buf).unwrap();
+                                    //输出消息
+                                    print!("size = {},receive = {}",num,content);
+                                }
+                            }
+                            Err(err) => {
+                                println!("服务器连接断开！err={:?}",err);
+                                //如果服务端断开则退出程序
+                                std::process::exit(0);
+                            }
+                        }
+
+                    }
+                    //读取通道的消息发送给服务端
+                    result = rx.recv() => {
+                        let send = result.unwrap();
+                        //发送给服务端
+                        let _ = write_half.write_all(send.as_bytes()).await;
+                        let _ = write_half.flush();
+                    }
+                }
+            }
+        });
+        loop {
+            //创建string
+            let mut send = String::new();
+            //读取控制台文字
+            std::io::stdin().read_line(&mut send).unwrap();
+            //通过通道发送
+            tx.send(send).unwrap();
+        }
+    }
+}

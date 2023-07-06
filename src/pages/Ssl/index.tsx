@@ -66,13 +66,9 @@ const Ssl = () => {
                     <Button onClick={clear}>清空</Button>
                 </Col>
                 <Col span={24}>
-                    <Title level={3}>公钥</Title>
+                    <Title level={3}>证书</Title>
                     {pem && <Paragraph ><pre>{pem}</pre></Paragraph>}
                 </Col>
-                {/* <Col span={24}>
-                    <Title level={3}>私钥</Title>
-                    {pem[1] && <Paragraph ><pre>{pem[1]}</pre></Paragraph>}
-                </Col> */}
             </Space>
         </Row ></>
 }
