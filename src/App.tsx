@@ -26,11 +26,14 @@ function getItem(
 }
 
 const items: MenuProps['items'] = [
-  getItem('加密解密', 'sub1', <MailOutlined />, [
+  getItem('加密解密', 'sub1', null, [
     getItem('RSA密钥生成', 'rsa', null),
     getItem('SSL证书生成', 'ssl', null),
   ]),
   { type: 'divider' },
+  getItem('网络通信', 'sub2', null, [
+    getItem('Socket', 'socket', null),
+  ]),
 ];
 
 const App: React.FC = () => {

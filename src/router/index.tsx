@@ -1,6 +1,7 @@
 import { Navigate, useRoutes } from 'react-router-dom';
 import Rsa from '../pages/Rsa';
 import Ssl from '../pages/Ssl';
+import Socket from '../pages/Socket';
 import App from '../App';
 
 export default function BaseRouter() {
@@ -20,6 +21,10 @@ export default function BaseRouter() {
                 {
                     path: "/ssl",
                     element: <Ssl />
+                },
+                {
+                    path: '/socket',
+                    element: <Socket />
                 }
             ]
         }
