@@ -2,13 +2,15 @@ pub mod rsa_util {
     use openssl::rsa::Rsa;
 
     #[tauri::command]
-    pub fn generate_key(bits: u32) -> (String, String, String, String) {
+    pub fn generate_key(bits: u32) -> (String, String, String, String, String, String) {
         let rsa = Rsa::generate(bits).expect("Failed to generate RSA key pair");
         let n = rsa.n().to_string();
         let e = rsa.e().to_string();
         let p = rsa.p().expect("p").to_string();
         let q = rsa.q().expect("q").to_string();
-        (p, q, n, e)
+        let public = String::from_utf8(rsa.public_key_to_pem().expect("public")).unwrap();
+        let private = String::from_utf8(rsa.private_key_to_pem().expect("private")).unwrap();
+        (p, q, n, e, public, private)
     }
 }
 

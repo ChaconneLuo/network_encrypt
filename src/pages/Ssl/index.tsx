@@ -4,20 +4,10 @@ import { useState } from "react";
 
 const { Title, Paragraph } = Typography;
 
-/**
- * 
- * @returns pub fn generate_509(
-        bits: u32,
-        host: &str,
-        organization: &str,
-        serial: u32,
-        days: u32,
-    ) 
- */
 const Ssl = () => {
-    const [pem, setPem] = useState<string>();
+    const [pem, setPem] = useState<string>('');
     const [bits, setBits] = useState<number>(1024);
-    const [host, setHost] = useState<string>('loalhost');
+    const [host, setHost] = useState<string>('localhost');
     const [organization, setOrganization] = useState<string>('Chaconne');
     const [serial, setSerial] = useState<number>(1);
     const [days, setDays] = useState<number>(365);
@@ -76,9 +66,13 @@ const Ssl = () => {
                     <Button onClick={clear}>清空</Button>
                 </Col>
                 <Col span={24}>
-                    <Title level={3}>证书</Title>
+                    <Title level={3}>公钥</Title>
                     {pem && <Paragraph ><pre>{pem}</pre></Paragraph>}
                 </Col>
+                {/* <Col span={24}>
+                    <Title level={3}>私钥</Title>
+                    {pem[1] && <Paragraph ><pre>{pem[1]}</pre></Paragraph>}
+                </Col> */}
             </Space>
         </Row ></>
 }

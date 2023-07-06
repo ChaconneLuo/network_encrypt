@@ -20,7 +20,7 @@ const Rsa = () => {
     }
 
     async function generate_key() {
-        const res = await invoke<[string, string, string, string]>("generate_key", { bits });
+        const res = await invoke<[string, string, string, string, string, string]>("generate_key", { bits });
         setKey(res);
     }
 
@@ -47,6 +47,14 @@ const Rsa = () => {
                 <Col span={24}>
                     <Title level={3}>e</Title>
                     {key[3] && <Paragraph ><pre>{key[3]}</pre></Paragraph>}
+                </Col>
+                <Col span={24}>
+                    <Title level={3}>public</Title>
+                    {key[4] && <Paragraph ><pre>{key[4]}</pre></Paragraph>}
+                </Col>
+                <Col span={24}>
+                    <Title level={3}>private</Title>
+                    {key[5] && <Paragraph ><pre>{key[5]}</pre></Paragraph>}
                 </Col>
             </Space>
         </Row >
