@@ -7,7 +7,7 @@ import BaseRouter from './router';
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
-    <Watermark content="Pang Lifan" font={{ color: '#BBC7D7' }}>
+    <Watermark content="" font={{ color: '#BBC7D7' }}>
       <Router>
         <BaseRouter />
       </Router>
