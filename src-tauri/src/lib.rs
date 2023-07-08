@@ -216,7 +216,6 @@ pub mod socket_util {
         loop {
             //创建string
             let mut send = String::new();
-            //读取控制台文字
             std::io::stdin().read_line(&mut send).unwrap();
             //通过通道发送
             tx.send(send).unwrap();

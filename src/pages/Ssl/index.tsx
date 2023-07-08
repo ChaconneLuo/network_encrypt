@@ -27,7 +27,7 @@ const Ssl = () => {
     }
     const handleSerial = (value: number | null) => {
         if (!value) {
-            value = 1024;
+            value = 1;
         }
         setSerial(value);
     }
@@ -52,7 +52,7 @@ const Ssl = () => {
             <Space direction="vertical" style={{ width: '600px' }}>
                 <Col span={24}>
                     长度：<InputNumber value={bits} onChange={handleBits} min={1024}></InputNumber>
-                    序列号：<InputNumber value={serial} onChange={handleSerial} ></InputNumber>
+                    序列号：<InputNumber value={serial} onChange={handleSerial} min={1}></InputNumber>
                     有效期：<InputNumber value={days} onChange={handleDays} min={1}></InputNumber>
                 </Col>
                 <Col span={24}>
